@@ -12,6 +12,10 @@ import (
 
 func main() {
 
+	//Initialize the users in the chat
+	InitUsers()
+	fmt.Println("Initialized the Users")
+
 	bot, err := tgbotapi.NewBotAPI("348577595:AAHHm0zC10iUEp6l5o2RP-pJ45Hl9f9DOnU")
 	if err != nil {
 		log.Panic(err)
@@ -67,16 +71,23 @@ func pay(messageArray []string) string {
     returnString := "default"
     
     if(len(messageArray) < 3) {
-        return "There are less than three arguments"
+		return "Error: There are less than three arguments"
     }
+	
+	//Get the username, and check that its valid
+	atUser := messageArray[1]
+	valid := ValidUser(atUser)
+	if valid == false {
+		return "Error: Username not found"
+	}
 
-    //Make sure this is a valid amount
+	//Get the dollar amount and check that its valid
     amountToSend, err := strconv.Atoi(messageArray[2])
     err = validPrice(amountToSend)
     if err != nil {
-		returnString = "ERROR invalid price"
-        panic("invalid price")
-    }
+		returnString = "Error: Invalid Price"
+		return returnString
+	}
 
 	returnString = "We made a payment"
 
@@ -90,4 +101,15 @@ func validPrice(price int) error{
     }
 
     return nil;
+}
+
+func ValidUser(user string) bool {
+	valid := false
+	user = user[1:len(user)]
+	for i := 0; i < len(users); i++ {
+		if user == users[i].TelegramUsername {
+			valid = true
+		}
+	}
+	return valid
 }
