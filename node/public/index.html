@@ -11,8 +11,10 @@
           <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
     </head>
     <body style="font-family:roboto;background-color: #00004a;">
-    <img src="pixiu.png" style="height:100px"/>
-    <span style="font-size:134px;color:lightgray">Pixiu Bot</span>
+    <div style="display:flex;margin-bottom:40px;margin-top:80px">
+    <img src="pixiu.png" style="padding-left:80px;height:300px"/>
+    <span style="font-size:134px;color:lightgray; text-shadow:2px 3px 0px black; margin:0 auto; margin-top:90px">Pixiu Bot</span>
+    </div>
     <div style="width:100%;height:100%;display:flex">
 	    <div style="color:darkgray;font-size:70px;margin:20px;padding:0px;width:30%;height:200px;/* border: 1px solid black; */border-radius:10px;background-color: rgba(218, 218, 218, 0.21);">
 	    <div style="height:40%;border-bottom:5px solid #00004a;">
@@ -46,14 +48,48 @@
 			$( document ).ready(function() {
 				var accounts = {};
 				var audio = new Audio('ching.mp3');
-				accounts['cam']= "58d6f3701756fc834d906ad5";
-				accounts['kyle']="58d6f49c1756fc834d906ae1";
-				accounts['emerson']="58d6f4441756fc834d906ae0";
+				accounts['cam']= "58d7ddb41756fc834d909d36";
+				accounts['kyle']="58d7de011756fc834d909d38";
+				accounts['emerson']="58d7de291756fc834d909d3c";
 				var prev = {};
 				prev['cam']=0;
 				prev['kyle']=0;
 				prev['emerson']=0;
+				$.ajax({
+				  url: "http://api.reimaginebanking.com/accounts/" + accounts['cam'] + "?key=a3186093b7ef7cd4d2f3d5234b9c4775",
+				  context: document.body
+				}).done(function(resp) {
+					var cam = '$'+resp.balance.toLocaleString('en-US', {minimumFractionDigits: 2});
+					$( '#cam' ).text(cam);
+					if(cam!=prev['cam'])
+					prev['cam']=cam;
+				  $( '#cam' ).text(cam);
+				});
+				$.ajax({
+				  url: "http://api.reimaginebanking.com/accounts/" + accounts['emerson'] + "?key=a3186093b7ef7cd4d2f3d5234b9c4775",
+				  context: document.body
+				}).done(function(resp) {
+					var emerson = '$'+resp.balance.toLocaleString('en-US', {minimumFractionDigits: 2});
+				$( '#emerson' ).text(emerson);
+				if(emerson!=prev['emerson'])
+
+					prev['emerson']=emerson;
+				  $( '#emerson' ).text(emerson);
+				});
+				$.ajax({
+				  url: "http://api.reimaginebanking.com/accounts/" + accounts['kyle'] + "?key=a3186093b7ef7cd4d2f3d5234b9c4775",
+				  context: document.body
+				}).done(function(resp) {
+					var kyle = '$'+resp.balance.toLocaleString('en-US', {minimumFractionDigits: 2});
+				$( '#kyle' ).text(kyle);
+					if(kyle!=prev['kyle'])changed=true;;
+					prev['kyle']=kyle;
+				  $( '#kyle' ).text(kyle);
+				});
 				setInterval(function(){
+					$('#emerson').css('border', '0px solid green');
+					$('#cam').css('border', '0px solid green');
+					$('#kyle').css('border', '0px solid green');
 				$.ajax({
 				  url: "http://api.reimaginebanking.com/accounts/" + accounts['cam'] + "?key=a3186093b7ef7cd4d2f3d5234b9c4775",
 				  context: document.body
@@ -85,7 +121,7 @@
 					prev['kyle']=kyle;
 				  $( '#kyle' ).text(kyle);
 				});
-			}, 10000);
+			}, 5000);
 			});		
 		</script>    
     </body>
