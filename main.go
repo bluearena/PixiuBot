@@ -55,7 +55,9 @@ func main() {
 			response = "Error: Not a valid command"
 		} else if firstThree := inputString[0:3]; firstThree == "pay" {
 			fmt.Println("you hit the pay command")
-			response = "Please enter your friends name"
+			if length == 3 {
+				response = "Please enter your friends name"
+			}
 
 			if inputString[len(inputString)-2] == ' ' {
 				end := len(inputString) - 2
@@ -73,6 +75,7 @@ func main() {
 
 		fmt.Println("Current amount:", money)
 		fmt.Println("Current username:", userName)
+		fmt.Println("made it past that!")
 
 		//Get Telegram ID for Sender
 		senderID := ""
@@ -108,6 +111,8 @@ func main() {
 			CacheTime:     0,
 			Results:       []interface{}{article},
 		}
+
+		fmt.Println("made it to the end")
 
 		// Don't take any errors!
 		_, _ = bot.AnswerInlineQuery(inlineConf)
