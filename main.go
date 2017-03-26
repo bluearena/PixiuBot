@@ -41,14 +41,18 @@ func main() {
 	money := 0
 	end := 0
 	var lastUpdate tgbotapi.Update
+
+	fmt.Println("About to run loop!")
 	for update := range updates {
+		fmt.Println("Running Loop!")
 
-
-		if &update == nil {
+		if update.InlineQuery == nil {
+			fmt.Println("NIL")
 			break
 		}
 
 		if update.InlineQuery.Query == "" {
+			fmt.Println("QUERY IS EMPTY")
 			continue
 		}
 
@@ -112,9 +116,10 @@ func main() {
 	receiverID := ""
 
 	for _, u := range users {
-		fmt.Println("Tele Name", u.TelegramUsername)
-		fmt.Println("user Name", userName)
+		fmt.Println("Tele Name LEN", len(u.TelegramUsername))
+		fmt.Println("user Name LEN", len(userName))
 		if u.TelegramUsername == userName {
+			fmt.Println("MATCH")
 			receiverID = u.CapitalOneAccountID
 		}
 

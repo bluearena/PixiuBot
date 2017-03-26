@@ -14,23 +14,23 @@ type Users []*User
 func InitUsers() {
 	csinko := User{
 		TelegramID:          "258303594",
-		TelegramUsername:    "csinko",
+		TelegramUsername:    "csinko ",
 		CapitalOneID:        "58d6efba1756fc834d906ad1",
-		CapitalOneAccountID: "58d6f3701756fc834d906ad5",
+		CapitalOneAccountID: "58d7ddb41756fc834d909d36",
 	}
 
 	kdog5 := User{
 		TelegramID:          "316190324",
-		TelegramUsername:    "kdog5",
+		TelegramUsername:    "kdog5 ",
 		CapitalOneID:        "58d6f1571756fc834d906ad3",
-		CapitalOneAccountID: "58d6f49c1756fc834d906ae1",
+		CapitalOneAccountID: "58d7de011756fc834d909d38",
 	}
 
 	memerson := User{
 		TelegramID:          "304490471",
-		TelegramUsername:    "memerson",
+		TelegramUsername:    "memerson ",
 		CapitalOneID:        "58d6f1431756fc834d906ad2",
-		CapitalOneAccountID: "58d6f4441756fc834d906ae0",
+		CapitalOneAccountID: "58d7de291756fc834d909d3c",
 	}
 
 	RepoAddUser(&csinko)
