@@ -1,10 +1,13 @@
 package main
-
 import (
 	"fmt"
+    "strconv"
 	"gopkg.in/telegram-bot-api.v4"
 	"log"
+    //"net/http"
+    //"io/ioutil"
 	"strings"
+    "errors"
 )
 
 func main() {
@@ -22,7 +25,7 @@ func main() {
 	u.Timeout = 60
 
 	updates, err := bot.GetUpdatesChan(u)
-	response := "Well heck that didn't work maybe you should try again!"
+	response := "Default response"
 
 	for update := range updates {
 		if update.Message == nil {
@@ -32,24 +35,26 @@ func main() {
 		log.Printf("MESSAGE TEXT[%s]", update.Message.Text)
 
 		messageArray := strings.Split(update.Message.Text, " ")
-		fmt.Printf("MESSAGE ARRAY: %v", messageArray)
+		fmt.Println("MESSAGE ARRAY: %v", messageArray)
+
+        if len(messageArray) == 0 {
+            response = "Zero arguments detected"
+        }
 
 		//The command - put in error checking to make sure this is a valid command
 		slashCommand := messageArray[0]
 		//fmt.Printf(slashCommand)
 		switch slashCommand {
+
 		case "/pay":
 			fmt.Println("You hit the pay command")
-			response = "You hit the pay command"
-			//Call pay function
+            response = pay(messageArray)
+
 		case "/donger":
 			fmt.Println("You hit the donger command")
 			response = "You hit the donger command"
 			//call the donger function
 		}
-
-		//Check if the second thing has an at name
-		//Then check to see if the username is on the object or whatever
 
 		msg := tgbotapi.NewMessage(update.Message.Chat.ID, response)
 		msg.ReplyToMessageID = update.Message.MessageID
@@ -58,8 +63,31 @@ func main() {
 	}
 }
 
-func pay() {
+func pay(messageArray []string) string {
+    returnString := "default"
+    
+    if(len(messageArray) < 3) {
+        return "There are less than three arguments"
+    }
 
-	//DO a bunch of calls
+    //Make sure this is a valid amount
+    amountToSend, err := strconv.Atoi(messageArray[2])
+    err = validPrice(amountToSend)
+    if err != nil {
+		returnString = "ERROR invalid price"
+        panic("invalid price")
+    }
 
+	returnString = "We made a payment"
+
+    return returnString
+}
+
+func validPrice(price int) error{
+
+    if (price < 0) {
+        return errors.New("invalid price: negative value")
+    }
+
+    return nil;
 }
