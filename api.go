@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
@@ -44,21 +43,7 @@ func keepLines(s string, n int) string {
 	return strings.Replace(result, "\r", "", -1)
 }
 
-func testapi() {
-	url := "http://api.reimaginebanking.com/accounts?key=fab8d98dc85bc29afbe6b9915f27a0e7"
-	resp, err := http.Get(url)
-
-	if err != nil {
-		panic(err)
-	}
-
-	defer resp.Body.Close()
-	//fmt.Println(resp)
-	body, err := ioutil.ReadAll(resp.Body)
-	fmt.Println(string(body))
-
-}
-
+//SentPayment sends a payment
 func SentPayment(from string, to string, amount float64) {
 	link := url + "accounts/" + from + "/transfers" + key
 	jsonStr := `
@@ -70,9 +55,45 @@ func SentPayment(from string, to string, amount float64) {
   "description": "Paid Using Pixiu!"
 }
 	`
-	_, err := http.NewRequest("POST", link, bytes.NewBuffer([]byte(jsonStr)))
+	req, err := http.NewRequest("POST", link, bytes.NewBuffer([]byte(jsonStr)))
+
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
 	if err != nil {
 		fmt.Println(err)
 	}
+	defer resp.Body.Close()
+
+	fmt.Println("Payment Status: ", resp.Status)
+}
+
+//CreateAccount Creates Capital One Account
+func CreateAccount(telegramID string, telegramUsername string) {
+	link := url + "accounts" + key
+	jsonStr := `
+{
+  "first_name": "` + telegramUsername + `",
+  "last_name": "` + telegramUsername + `",
+  "address": {
+    "street_number": "123",
+    "street_name": "Main St.",
+    "city": "Akron",
+    "state": "OH",
+    "zip": "44340"
+  }
+}
+`
+
+	req, err := http.NewRequest("POST", link, bytes.NewBuffer([]byte(jsonStr)))
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer resp.Body.Close()
+	fmt.Println("Account Create Status: ", resp.Status)
 
 }
