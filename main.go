@@ -33,7 +33,7 @@ func main() {
 	/////////////////////////////////////
 	updates, err := bot.GetUpdatesChan(u)
 	response := "Please Get started!"
-	sendMessage := "Not sent!"
+	sendMessage := "Erro: Money not sent!"
 	length := 0
 	userName := ""
 	moneyStart := 0
@@ -44,7 +44,7 @@ func main() {
 			continue
 		}
 
-		fmt.Println("String that WE GOT BITCHES FUCK:", update.InlineQuery.Query)
+		fmt.Println("Input string:", update.InlineQuery.Query)
 
 		inputString := update.InlineQuery.Query
 		length = len(inputString)
@@ -58,6 +58,7 @@ func main() {
 			if inputString[len(inputString)-2] == ' ' {
 				end := len(inputString)-2
 				userName = inputString[5:end+1]
+				response = "Now enter a '$' followed by an amount!"
 			}
 
 			if inputString[len(inputString)-1] == '$' {
@@ -68,9 +69,8 @@ func main() {
 
 		}
 
-
-		fmt.Println("Here is the dollar amount we have so far:", money)
-		fmt.Println("hewrhewHERE WER GO THE USERNAME NFINALLYT :", userName)
+		fmt.Println("Current amount:", money)
+		fmt.Println("Current username:", userName)
 
 		// The article to display and message to return
 		sendMessage = "You sent @" + userName + " $" + strconv.Itoa(money)
@@ -91,23 +91,6 @@ func main() {
 		// Don't take any errors!
 		_, _ = bot.AnswerInlineQuery(inlineConf)
 
-		// Create the array of pieces parts typed into the chat window
-		// messageArray := strings.Split(update.InlineQuery.Query, " ")
-
-
-		//The command - put in error checking to make sure this is a valid command
-		//command := messageArray[0]
-
-		//switch command {
-		//case "pay":
-		//	fmt.Println("You hit the pay command")
-        //    response = pay(messageArray)
-		//}
-
-		//msg := tgbotapi.NewMessage(update.Message.Chat.ID, response)
-		//msg.ReplyToMessageID = update.Message.MessageID
-
-		//bot.Send(msg)
 	}
 }
 
