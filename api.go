@@ -43,14 +43,14 @@ func keepLines(s string, n int) string {
 	return strings.Replace(result, "\r", "", -1)
 }
 
-//SentPayment sends a payment
-func SentPayment(from string, to string, amount float64) {
+//SendPayment sends a payment
+func SendPayment(from string, to string, amount int) {
 	link := url + "accounts/" + from + "/transfers" + key
 	jsonStr := `
 	{
   "medium": "balance",
   "payee_id": "` + to + `",
-  "amount": ` + strconv.FormatFloat(amount, 'E', -1, 64) + `,
+  "amount": ` + strconv.Itoa(amount) + `,
   "transaction_date": "2017-03-25",
   "description": "Paid Using Pixiu!"
 }

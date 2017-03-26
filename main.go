@@ -1,11 +1,13 @@
 package main
+
 import (
 	"fmt"
-    "strconv"
-	"gopkg.in/telegram-bot-api.v4"
 	"log"
-//	"strings"
-    "errors"
+	"strconv"
+
+	"gopkg.in/telegram-bot-api.v4"
+	//	"strings"
+	"errors"
 )
 
 func main() {
@@ -56,8 +58,8 @@ func main() {
 			response = "Please enter your friends name"
 
 			if inputString[len(inputString)-2] == ' ' {
-				end := len(inputString)-2
-				userName = inputString[5:end+1]
+				end := len(inputString) - 2
+				userName = inputString[5 : end+1]
 				response = "Now enter a '$' followed by an amount!"
 			}
 
@@ -72,21 +74,40 @@ func main() {
 		fmt.Println("Current amount:", money)
 		fmt.Println("Current username:", userName)
 
+		//Get Telegram ID for Sender
+		senderID := ""
+		receiverID := ""
+
+		for _, u := range users {
+			if u.TelegramUsername == userName {
+				receiverID = u.CapitalOneAccountID
+			}
+
+			if u.TelegramID == strconv.Itoa(update.InlineQuery.From.ID) {
+				senderID = u.CapitalOneAccountID
+			}
+		}
+
+		if receiverID == "" || senderID == "" {
+			return
+		}
+
+		SendPayment(senderID, receiverID, money)
+
 		// The article to display and message to return
 		sendMessage = "You sent @" + userName + " $" + strconv.Itoa(money)
 		article := tgbotapi.NewInlineQueryResultArticle(update.InlineQuery.ID, "Click here when you're ready!", sendMessage)
 
-
 		//Set the body of the article after each update
-        article.Description = response
+		article.Description = response
 
 		// Not sure what this does yet
-        inlineConf := tgbotapi.InlineConfig{
-            InlineQueryID: update.InlineQuery.ID,
-            IsPersonal:    true,
-            CacheTime:     0,
-            Results:       []interface{}{article},
-        }
+		inlineConf := tgbotapi.InlineConfig{
+			InlineQueryID: update.InlineQuery.ID,
+			IsPersonal:    true,
+			CacheTime:     0,
+			Results:       []interface{}{article},
+		}
 
 		// Don't take any errors!
 		_, _ = bot.AnswerInlineQuery(inlineConf)
@@ -95,12 +116,12 @@ func main() {
 }
 
 func pay(messageArray []string) string {
-    returnString := "default"
-    
-    if(len(messageArray) < 3) {
+	returnString := "default"
+
+	if len(messageArray) < 3 {
 		return "Error: There are less than three arguments"
-    }
-	
+	}
+
 	//Get the username, and check that its valid
 	atUser := messageArray[1]
 	valid := ValidUser(atUser)
@@ -109,25 +130,25 @@ func pay(messageArray []string) string {
 	}
 
 	//Get the dollar amount and check that its valid
-    amountToSend, err := strconv.Atoi(messageArray[2])
-    err = validPrice(amountToSend)
-    if err != nil {
+	amountToSend, err := strconv.Atoi(messageArray[2])
+	err = validPrice(amountToSend)
+	if err != nil {
 		returnString = "Error: Invalid Price"
 		return returnString
 	}
 
 	returnString = "Ready to pay!"
 
-    return returnString
+	return returnString
 }
 
-func validPrice(price int) error{
+func validPrice(price int) error {
 
-    if (price < 0) {
-        return errors.New("invalid price: negative value")
-    }
+	if price < 0 {
+		return errors.New("invalid price: negative value")
+	}
 
-    return nil;
+	return nil
 }
 
 func ValidUser(user string) bool {
