@@ -39,6 +39,7 @@ func main() {
 	userName := ""
 	moneyStart := 0
 	money := 0
+	end := 0
 	var lastUpdate tgbotapi.Update
 	for update := range updates {
 		if update.InlineQuery.Query == "" {
@@ -59,7 +60,7 @@ func main() {
 			}
 
 			if inputString[len(inputString)-2] == ' ' {
-				end := len(inputString) - 2
+				end = len(inputString) - 2
 				userName = inputString[5 : end+1]
 				response = "Now enter a '$' followed by an amount!"
 			}
@@ -125,6 +126,12 @@ func main() {
 	}
 
 	SendPayment(senderID, receiverID, money)
+
+	//length = 0
+	//userName = ""
+	//moneyStart = 0
+	//money = 0
+	//end = 0
 }
 
 func pay(messageArray []string) string {
