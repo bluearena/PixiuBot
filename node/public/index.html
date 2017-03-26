@@ -8,37 +8,85 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="apple-touch-icon" href="pixiu.ico">
         <link rel="stylesheet" href="css/main.css">
+          <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
     </head>
-    <body style="background-color: #00004a;">
+    <body style="font-family:roboto;background-color: #00004a;">
     <img src="pixiu.png" style="height:100px"/>
+    <span style="font-size:134px;color:lightgray">Pixiu Bot</span>
     <div style="width:100%;height:100%;display:flex">
-	    <div style="color:darkgray;font-size:70px;margin:20px;padding:0px;width:30%;height:150px;/* border: 1px solid black; */border-radius:10px;background-color: rgba(218, 218, 218, 0.21);">
-	    <div style="border-bottom:5px solid #00004a;">
+	    <div style="color:darkgray;font-size:70px;margin:20px;padding:0px;width:30%;height:200px;/* border: 1px solid black; */border-radius:10px;background-color: rgba(218, 218, 218, 0.21);">
+	    <div style="height:40%;border-bottom:5px solid #00004a;">
 	    &nbsp Cam
 	    </div>
-	    <div style="font-size:50px; text-align:center">
-	    $1,000,000
+	    <div id="cam" style="padding-top:50px;height:60%;font-size:50px; text-align:center; display:">
+	    $0
 	    </div>
 	    </div>
 	   
-	    <div style="color:darkgray;font-size:70px;margin:20px;padding:0px;width:30%;height:150px;/* border: 1px solid black; */border-radius:10px;background-color: rgba(218, 218, 218, 0.21);">
-	    <div style="border-bottom:5px solid #00004a;">
-	    &nbsp Kyle
-	    </div>
-	    <div style="font-size:50px; text-align:center">
-	    $1,000,000
-	    </div>
-	    </div>
-	    <div style="color:darkgray;font-size:70px;margin:20px;padding:0px;width:30%;height:150px;/* border: 1px solid black; */border-radius:10px;background-color: rgba(218, 218, 218, 0.21);">
-	    <div style="border-bottom:5px solid #00004a;">
+	    <div style="color:darkgray;font-size:70px;margin:20px;padding:0px;width:30%;height:200px;/* border: 1px solid black; */border-radius:10px;background-color: rgba(218, 218, 218, 0.21);">
+	    <div style="height:40%;border-bottom:5px solid #00004a;">
 	    &nbsp Emerson
 	    </div>
-	    <div style="font-size:50px; text-align:center">
-	    $1,000,000
+	    <div id="emerson" style="padding-top:50px;height:60%;font-size:50px; text-align:center; display:">
+	    $0
+	    </div>
+	    </div>
+	    <div style="color:darkgray;font-size:70px;margin:20px;padding:0px;width:30%;height:200px;/* border: 1px solid black; */border-radius:10px;background-color: rgba(218, 218, 218, 0.21);">
+	    <div style="height:40%;border-bottom:5px solid #00004a;">
+	    &nbsp Kyle
+	    </div>
+	    <div id="kyle" style="padding-top:50px;height:60%;font-size:50px; text-align:center; display:">
+	    $0
 	    </div>
 	    </div>
     </div>
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
+		<script>
+			$( document ).ready(function() {
+				var accounts = {};
+				var audio = new Audio('ching.mp3');
+				accounts['cam']= "58d6f3701756fc834d906ad5";
+				accounts['kyle']="58d6f49c1756fc834d906ae1";
+				accounts['emerson']="58d6f4441756fc834d906ae0";
+				var prev = {};
+				prev['cam']=0;
+				prev['kyle']=0;
+				prev['emerson']=0;
+				setInterval(function(){
+				$.ajax({
+				  url: "http://api.reimaginebanking.com/accounts/" + accounts['cam'] + "?key=a3186093b7ef7cd4d2f3d5234b9c4775",
+				  context: document.body
+				}).done(function(resp) {
+					var cam = '$'+resp.balance.toLocaleString('en-US', {minimumFractionDigits: 2});
+					$( '#cam' ).text(cam);
+					if(cam!=prev['cam'])
+					prev['cam']=cam;
+				  $( '#cam' ).text(cam);
+				});
+				$.ajax({
+				  url: "http://api.reimaginebanking.com/accounts/" + accounts['emerson'] + "?key=a3186093b7ef7cd4d2f3d5234b9c4775",
+				  context: document.body
+				}).done(function(resp) {
+					var emerson = '$'+resp.balance.toLocaleString('en-US', {minimumFractionDigits: 2});
+				$( '#emerson' ).text(emerson);
+				if(emerson!=prev['emerson'])audio.play()
+
+					prev['emerson']=emerson;
+				  $( '#emerson' ).text(emerson);
+				});
+				$.ajax({
+				  url: "http://api.reimaginebanking.com/accounts/" + accounts['kyle'] + "?key=a3186093b7ef7cd4d2f3d5234b9c4775",
+				  context: document.body
+				}).done(function(resp) {
+					var kyle = '$'+resp.balance.toLocaleString('en-US', {minimumFractionDigits: 2});
+				$( '#kyle' ).text(kyle);
+					if(kyle!=prev['kyle'])changed=true;;
+					prev['kyle']=kyle;
+				  $( '#kyle' ).text(kyle);
+				});
+			}, 10000);
+			});		
+		</script>    
     </body>
 </html>
