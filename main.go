@@ -42,6 +42,12 @@ func main() {
 	end := 0
 	var lastUpdate tgbotapi.Update
 	for update := range updates {
+
+
+		if &update == nil {
+			break
+		}
+
 		if update.InlineQuery.Query == "" {
 			continue
 		}
@@ -126,6 +132,10 @@ func main() {
 	}
 
 	SendPayment(senderID, receiverID, money)
+	fmt.Println("MADEW THE CLALL MY MANE")
+	fmt.Println("MADEW THE CLALL MY MANE")
+	fmt.Println("MADEW THE CLALL MY MANE")
+	fmt.Println("MADEW THE CLALL MY MANE")
 
 	//length = 0
 	//userName = ""
