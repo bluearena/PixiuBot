@@ -22,7 +22,6 @@ func main() {
 	if err != nil {
 		log.Panic(err)
 	}
-
 	bot.Debug = true
 
 	fmt.Printf("Authorized on account %s", bot.Self.UserName)
@@ -40,7 +39,7 @@ func main() {
 	userName := ""
 	moneyStart := 0
 	money := 0
-
+	var lastUpdate tgbotapi.Update
 	for update := range updates {
 		if update.InlineQuery.Query == "" {
 			continue
@@ -77,26 +76,6 @@ func main() {
 		fmt.Println("Current username:", userName)
 		fmt.Println("made it past that!")
 
-		//Get Telegram ID for Sender
-		senderID := ""
-		receiverID := ""
-
-		for _, u := range users {
-			if u.TelegramUsername == userName {
-				receiverID = u.CapitalOneAccountID
-			}
-
-			if u.TelegramID == strconv.Itoa(update.InlineQuery.From.ID) {
-				senderID = u.CapitalOneAccountID
-			}
-		}
-
-		if receiverID == "" || senderID == "" {
-			return
-		}
-
-		SendPayment(senderID, receiverID, money)
-
 		// The article to display and message to return
 		sendMessage = "You sent @" + userName + " $" + strconv.Itoa(money)
 		article := tgbotapi.NewInlineQueryResultArticle(update.InlineQuery.ID, "Click here when you're ready!", sendMessage)
@@ -116,8 +95,36 @@ func main() {
 
 		// Don't take any errors!
 		_, _ = bot.AnswerInlineQuery(inlineConf)
-
+		lastUpdate = update
 	}
+
+	//maybe just throw the API call down here That might be the bets bet
+
+	//Get Telegram ID for Sender
+	senderID := ""
+	receiverID := ""
+
+	for _, u := range users {
+		fmt.Println("Tele Name", u.TelegramUsername)
+		fmt.Println("user Name", userName)
+		if u.TelegramUsername == userName {
+			receiverID = u.CapitalOneAccountID
+		}
+
+		if u.TelegramID == strconv.Itoa(lastUpdate.InlineQuery.From.ID) {
+			senderID = u.CapitalOneAccountID
+		}
+	}
+
+	fmt.Println("done with for loop!")
+	fmt.Println("Rec ID: ", receiverID)
+	fmt.Println("Send ID: ", senderID)
+
+	if receiverID == "" || senderID == "" {
+		return
+	}
+
+	SendPayment(senderID, receiverID, money)
 }
 
 func pay(messageArray []string) string {
