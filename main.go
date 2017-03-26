@@ -4,15 +4,15 @@ import (
     "strconv"
 	"gopkg.in/telegram-bot-api.v4"
 	"log"
-    //"net/http"
-    //"io/ioutil"
-	"strings"
+//	"strings"
     "errors"
 )
 
 func main() {
 
+	/////////////////////////////////////
 	//Initialize the users in the chat
+	/////////////////////////////////////
 	InitUsers()
 	fmt.Println("Initialized the Users")
 
@@ -28,42 +28,86 @@ func main() {
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
 
+	/////////////////////////////////////
+	// Wait for updates to the inline query
+	/////////////////////////////////////
 	updates, err := bot.GetUpdatesChan(u)
-	response := "Default response"
+	response := "Please Get started!"
+	sendMessage := "Not sent!"
+	length := 0
+	userName := ""
+	moneyStart := 0
+	money := 0
 
 	for update := range updates {
-		if update.Message == nil {
+		if update.InlineQuery.Query == "" {
 			continue
 		}
 
-		log.Printf("MESSAGE TEXT[%s]", update.Message.Text)
+		fmt.Println("String that WE GOT BITCHES FUCK:", update.InlineQuery.Query)
 
-		messageArray := strings.Split(update.Message.Text, " ")
-		fmt.Println("MESSAGE ARRAY: %v", messageArray)
+		inputString := update.InlineQuery.Query
+		length = len(inputString)
 
-        if len(messageArray) == 0 {
-            response = "Zero arguments detected"
-        }
+		if length < 3 {
+			response = "Error: Not a valid command"
+		} else if firstThree := inputString[0:3]; firstThree == "pay" {
+			fmt.Println("you hit the pay command")
+			response = "Please enter your friends name"
 
-		//The command - put in error checking to make sure this is a valid command
-		slashCommand := messageArray[0]
-		//fmt.Printf(slashCommand)
-		switch slashCommand {
+			if inputString[len(inputString)-2] == ' ' {
+				end := len(inputString)-2
+				userName = inputString[5:end+1]
+			}
 
-		case "/pay":
-			fmt.Println("You hit the pay command")
-            response = pay(messageArray)
+			if inputString[len(inputString)-1] == '$' {
+				moneyStart = len(inputString)
+			}
 
-		case "/donger":
-			fmt.Println("You hit the donger command")
-			response = "You hit the donger command"
-			//call the donger function
+			money, _ = strconv.Atoi(inputString[moneyStart:len(inputString)])
+
 		}
 
-		msg := tgbotapi.NewMessage(update.Message.Chat.ID, response)
-		msg.ReplyToMessageID = update.Message.MessageID
 
-		bot.Send(msg)
+		fmt.Println("Here is the dollar amount we have so far:", money)
+		fmt.Println("hewrhewHERE WER GO THE USERNAME NFINALLYT :", userName)
+
+		// The article to display and message to return
+		sendMessage = "You sent @" + userName + " $" + strconv.Itoa(money)
+		article := tgbotapi.NewInlineQueryResultArticle(update.InlineQuery.ID, "Click here when you're ready!", sendMessage)
+
+
+		//Set the body of the article after each update
+        article.Description = response
+
+		// Not sure what this does yet
+        inlineConf := tgbotapi.InlineConfig{
+            InlineQueryID: update.InlineQuery.ID,
+            IsPersonal:    true,
+            CacheTime:     0,
+            Results:       []interface{}{article},
+        }
+
+		// Don't take any errors!
+		_, _ = bot.AnswerInlineQuery(inlineConf)
+
+		// Create the array of pieces parts typed into the chat window
+		// messageArray := strings.Split(update.InlineQuery.Query, " ")
+
+
+		//The command - put in error checking to make sure this is a valid command
+		//command := messageArray[0]
+
+		//switch command {
+		//case "pay":
+		//	fmt.Println("You hit the pay command")
+        //    response = pay(messageArray)
+		//}
+
+		//msg := tgbotapi.NewMessage(update.Message.Chat.ID, response)
+		//msg.ReplyToMessageID = update.Message.MessageID
+
+		//bot.Send(msg)
 	}
 }
 
@@ -89,7 +133,7 @@ func pay(messageArray []string) string {
 		return returnString
 	}
 
-	returnString = "We made a payment"
+	returnString = "Ready to pay!"
 
     return returnString
 }
